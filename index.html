@@ -42,12 +42,10 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
   cursor:pointer;font-size:.9rem;font-weight:600;color:var(--muted);transition:all .2s;margin-bottom:0}
 .go input:checked+label{background:rgba(192,57,43,.18);border-color:var(--red2);color:var(--red2)}
 .go input:disabled+label{opacity:.35;cursor:not-allowed;pointer-events:none}
-
 .age-warn{display:none;margin-bottom:14px;padding:10px 14px;background:rgba(231,76,60,.1);
   border:1px solid rgba(231,76,60,.35);border-radius:9px;font-size:.82rem;color:#e74c3c;line-height:1.6}
 .auto-info{display:none;margin-top:6px;padding:7px 12px;background:rgba(243,156,18,.08);
   border:1px solid rgba(243,156,18,.25);border-radius:8px;font-size:.78rem;color:var(--gold);line-height:1.6}
-
 .note{margin-top:16px;padding:12px 15px;background:rgba(243,156,18,.08);
   border:1px solid rgba(243,156,18,.3);border-radius:9px;font-size:.81rem;color:var(--gold);line-height:1.7;text-align:center}
 .btn-main{width:100%;margin-top:14px;padding:14px;background:var(--red);color:#fff;border:none;
@@ -125,6 +123,9 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
 .mb{padding:11px 26px;background:var(--red);color:#fff;border:none;border-radius:9px;
   font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;margin:3px}
 .mb:hover{background:var(--red2)}
+.made-by{margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);
+  font-size:.75rem;color:var(--muted)}
+.made-by span{color:#4dabf7;font-weight:700}
 
 /* ══ MOBILE ══ */
 @media(max-width:580px){
@@ -154,33 +155,34 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
 <div id="lp">
   <div class="brand">
     <div class="brand-icon">⚽</div>
-  <h1>استبيان كرة القدم</h1>
-    <p>بحث في الوعي الرياضي والتعصب الكروي — تحت إشراف د. آيات صبحي | <span style="color: #4dabf7; font-weight: bold;">Made by Mohamed Abdulrahman</span></p>
+    <h1>استبيان كرة القدم</h1>
+    <p>بحث في الوعي الرياضي والتعصب الكروي — تحت إشراف د. آيات صبحي</p>
   </div>
 
   <div class="card">
     <div class="card-title">📋 البيانات الشخصية</div>
 
-    <!-- الاسم -->
     <div class="field">
       <label>الاسم <span style="color:var(--muted);font-size:.77rem">(اختياري)</span></label>
       <input type="text" id="fn" placeholder="اكتب اسمك هنا...">
     </div>
 
-    <!-- السن -->
+    <!-- الفئة العمرية — فئات واضحة بدون تداخل -->
     <div class="field">
-      <label>السن <span class="req">*</span></label>
+      <label>الفئة العمرية <span class="req">*</span></label>
       <select id="fa" onchange="onAgeChange()">
-        <option value="">اختر سنك</option>
+        <option value="">اختر فئتك العمرية</option>
+        <option value="15-18">من 15 إلى 18 سنة</option>
+        <option value="19-24">من 19 إلى 24 سنة</option>
+        <option value="25-30">من 25 إلى 30 سنة</option>
+        <option value="31-40">من 31 إلى 40 سنة</option>
       </select>
     </div>
 
-    <!-- تحذير أقل من 18 -->
     <div class="age-warn" id="age-warn">
-      ⚠️ بما أن سنك <strong>أقل من 18</strong>، تم تحديد قطاعك تلقائياً كـ <strong>ثانوي</strong> ووضعك كـ <strong>طالب</strong>.
+      ⚠️ بما أن فئتك العمرية <strong>15–18</strong>، تم تحديد قطاعك تلقائياً كـ <strong>ثانوي</strong> ووضعك كـ <strong>طالب</strong>.
     </div>
 
-    <!-- النوع -->
     <div class="field">
       <label>النوع <span class="req">*</span></label>
       <div class="gr">
@@ -189,11 +191,10 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
       </div>
     </div>
 
-    <!-- القطاع الدراسي -->
     <div class="field">
       <label>القطاع الدراسي <span class="req">*</span></label>
       <select id="fsector" onchange="onSectorChange()" disabled>
-        <option value="">اختر سنك أولاً</option>
+        <option value="">اختر الفئة العمرية أولاً</option>
         <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض، علاج طبيعي...)</option>
         <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات، فنون تطبيقية...)</option>
         <option value="أدبي وإنساني">أدبي وإنساني (آداب، حقوق، تجارة، إعلام، تربية...)</option>
@@ -202,23 +203,15 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
       <div class="auto-info" id="sector-info"></div>
     </div>
 
-    <!-- الوضع الأكاديمي -->
     <div class="field">
       <label>الوضع الأكاديمي <span class="req">*</span></label>
       <div class="gr">
-        <div class="go">
-          <input type="radio" name="status" id="st1" value="طالب">
-          <label for="st1">🎓 طالب</label>
-        </div>
-        <div class="go">
-          <input type="radio" name="status" id="st2" value="خريج">
-          <label for="st2">📜 خريج</label>
-        </div>
+        <div class="go"><input type="radio" name="status" id="st1" value="طالب"><label for="st1">🎓 طالب</label></div>
+        <div class="go"><input type="radio" name="status" id="st2" value="خريج"><label for="st2">📜 خريج</label></div>
       </div>
       <div class="auto-info" id="status-info"></div>
     </div>
 
-    <!-- النادي المفضل محلياً -->
     <div class="field">
       <label>النادي المفضل محلياً <span class="req">*</span></label>
       <select id="fclub">
@@ -230,33 +223,28 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
       </select>
     </div>
 
-  <div class="field">
+    <div class="field">
       <label>النادي المفضل عالمياً <span style="color:var(--muted);font-size:.77rem">(اختياري)</span></label>
       <select id="fwclub">
         <option value="—">تجاوز هذا السؤال</option>
-        
         <option value="ريال مدريد">ريال مدريد</option>
         <option value="برشلونة">برشلونة</option>
-        
         <option value="ليفربول">ليفربول</option>
         <option value="مانشستر سيتي">مانشستر سيتي</option>
         <option value="مانشستر يونايتد">مانشستر يونايتد</option>
         <option value="أرسنال">أرسنال</option>
         <option value="تشيلسي">تشيلسي</option>
         <option value="توتنهام">توتنهام</option>
-        
         <option value="يوفنتوس">يوفنتوس</option>
         <option value="إنتر ميلان">إنتر ميلان</option>
-        <option value="إيه سي ميلان">إيه سي ميلان</option>
-        
+        <option value="إي سي ميلان">إي سي ميلان</option>
         <option value="بايرن ميونخ">بايرن ميونخ</option>
         <option value="باريس سان جيرمان">باريس سان جيرمان</option>
-        
         <option value="نادي آخر">نادي آخر</option>
         <option value="لا أتابع كرة عالمية">لا أتابع كرة عالمية</option>
       </select>
     </div>
-    <!-- معدل المتابعة -->
+
     <div class="field">
       <label>معدل متابعتك الأسبوعية للكرة <span class="req">*</span></label>
       <select id="fwatch">
@@ -321,147 +309,143 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
   <button class="mb" onclick="closeOv('m-incomplete')">حسناً، سأكملها</button>
 </div></div>
 
+<!-- modal النجاح — فيه Made by في الآخر -->
 <div class="ov" id="m-success"><div class="modal sm">
-  <div class="modal-icon">✅</div><h3>تم الإرسال بنجاح!</h3>
+  <div class="modal-icon">✅</div>
+  <h3>تم الإرسال بنجاح!</h3>
   <p>شكراً لمشاركتك 🙏<br>تم تسجيل بياناتك في قاعدة البيانات البحثية بنجاح.</p>
   <button class="mb" onclick="location.reload()">إغلاق</button>
+  <div class="made-by">Made by <span>Mohamed Abdulrahman</span></div>
 </div></div>
 
 <script>
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxu9lGLJPjBE-uN3eDyENdpMNhOueqU7bxRSr7j1KTM4NAY-J1vPiYJvhUuDDtj-ouG/exec';
 
 // ══════════════════════════════════════════════════════
-//  منطق السن والوضع الأكاديمي
+//  منطق الفئة العمرية والوضع الأكاديمي
+//
+//  الفئات:
+//    15-18  → ثانوي إجباري، طالب إجباري
+//    19-24  → جامعة، طالب دائماً (كل القطاعات في نطاق الطالب)
+//    25-30  → جامعة، طالب أو خريج حسب القطاع
+//              طبي:    أقصى طالب 27 → 25-26-27 طالب، 28+ خريج
+//                      لكن الفئة 25-30: 25,26,27 طالب | 28,29,30 خريج
+//                      نستخدم وسط الفئة (27) → نسمح بالاتنين
+//              باقي:   أقصى طالب 26 → 25,26 طالب | 27+ خريج
+//                      وسط الفئة 25-30 = 27 → فوق الحد → خريج إجباري
+//                      لكن 25 و26 طالب! → نسمح بالاتنين عشان مش نظلم حد
+//    31-40  → خريج إجباري بدون استثناء
 // ══════════════════════════════════════════════════════
 
-// أقصى سن كطالب لكل قطاع = سن التخرج الطبيعي + 4 سنين رسوب
-// طبي:    18 + 5 (متوسط) + 4 = 27
-// هندسي:  18 + 4 (متوسط) + 4 = 26
-// أدبي:   18 + 4           + 4 = 26
-// رياضي:  18 + 4           + 4 = 26
-// ثانوي:  15-17 فقط (طالب دائماً)
-
-const MAX_STUDENT_AGE = {
-  'طبي وصحي':       27,
-  'هندسي وتكنولوجي': 26,
-  'أدبي وإنساني':    26,
-  'رياضي وفني':      26,
+// قواعد كل فئة + قطاع → { student: bool, graduate: bool }
+// true = متاح | false = مش متاح
+const RULES = {
+  '15-18': {
+    // ثانوي فقط، طالب فقط — القطاع يتحدد تلقائياً
+    auto: true,
+    sector: 'ثانوي',
+    student: true,
+    graduate: false,
+  },
+  '19-24': {
+    // كل القطاعات الجامعية — طالب دائماً (19+4سنين = 23 أقصى طالب عادي، 24 مع رسوب)
+    auto: false,
+    student: true,
+    graduate: false,
+  },
+  '25-30': {
+    // حسب القطاع — بنسمح بالاتنين عشان الفئة واسعة وفيها طلاب وخريجين
+    auto: false,
+    student: true,
+    graduate: true,
+    note: 'اختر وضعك الفعلي — سنك يسمح بالاتنين حسب قطاعك'
+  },
+  '31-40': {
+    // خريج إجباري
+    auto: false,
+    student: false,
+    graduate: true,
+  }
 };
 
-// الفئة العمرية للـ SPSS (مستقلة — بتتحدد من السن فقط)
-function getAgeGroup(age) {
-  if (age < 18)  return 'أقل من 18 سنة';
-  if (age <= 24) return 'من 18 إلى 24 سنة';
-  if (age <= 35) return 'من 25 إلى 35 سنة';
-  return 'أكبر من 35 سنة';
-}
-
-// ── بناء قائمة السن ──────────────────────────────────
-(function(){
-  const s = document.getElementById('fa');
-  for(let i = 15; i <= 50; i++){
-    const o = document.createElement('option');
-    o.value = i; o.textContent = i + ' سنة';
-    s.appendChild(o);
-  }
-})();
-
-// ── عند تغيير السن ───────────────────────────────────
 function onAgeChange() {
-  const age = parseInt(document.getElementById('fa').value);
-  const sectorSel  = document.getElementById('fsector');
-  const st1        = document.getElementById('st1');   // طالب
-  const st2        = document.getElementById('st2');   // خريج
-  const warn       = document.getElementById('age-warn');
-  const sectorInfo = document.getElementById('sector-info');
-  const statusInfo = document.getElementById('status-info');
+  const group   = document.getElementById('fa').value;
+  const sector  = document.getElementById('fsector');
+  const st1     = document.getElementById('st1');
+  const st2     = document.getElementById('st2');
+  const warn    = document.getElementById('age-warn');
+  const secInfo = document.getElementById('sector-info');
+  const stInfo  = document.getElementById('status-info');
 
-  // reset
-  sectorSel.disabled = true;
-  sectorSel.value = '';
+  // reset كامل
+  sector.value = ''; sector.disabled = true;
   st1.checked = false; st2.checked = false;
   st1.disabled = false; st2.disabled = false;
   warn.style.display = 'none';
-  sectorInfo.style.display = 'none';
-  statusInfo.style.display = 'none';
+  secInfo.style.display = 'none';
+  stInfo.style.display = 'none';
 
-  if (!age) return;
+  if (!group) return;
 
-  if (age < 18) {
-    // ── ثانوي إجباري ──
+  const rule = RULES[group];
+
+  if (rule.auto) {
+    // ── 15-18: ثانوي + طالب تلقائي ──
     warn.style.display = 'block';
-    sectorSel.disabled = true;
-    sectorSel.innerHTML = '<option value="ثانوي">ثانوي</option>';
-    sectorSel.value = 'ثانوي';
-    st1.checked = true;          // طالب إجباري
-    st2.disabled = true;         // خريج مش متاح
-    statusInfo.style.display = 'block';
-    statusInfo.textContent = '✅ تم تحديد وضعك تلقائياً: طالب — لأن سنك أقل من 18';
+    sector.innerHTML = '<option value="ثانوي">ثانوي</option>';
+    sector.value = 'ثانوي';
+    sector.disabled = true;
+    st1.checked = true;
+    st2.disabled = true;
+    stInfo.style.display = 'block';
+    stInfo.textContent = '✅ تم التحديد تلقائياً: ثانوي — طالب';
 
-  } else if (age > 35) {
-    // ── خريج إجباري ──
-    sectorSel.disabled = false;
-    sectorSel.innerHTML = `
+  } else if (!rule.student) {
+    // ── 31-40: خريج إجباري ──
+    sector.innerHTML = `
       <option value="">اختر القطاع</option>
       <option value="طبي وصحي">طبي وصحي</option>
       <option value="هندسي وتكنولوجي">هندسي وتكنولوجي</option>
       <option value="أدبي وإنساني">أدبي وإنساني</option>
-      <option value="رياضي وفني">رياضي وفني</option>
-    `;
-    st2.checked = true;          // خريج إجباري
-    st1.disabled = true;         // طالب مش متاح
-    statusInfo.style.display = 'block';
-    statusInfo.textContent = '✅ تم تحديد وضعك تلقائياً: خريج — لأن سنك أكبر من 35';
+      <option value="رياضي وفني">رياضي وفني</option>`;
+    sector.disabled = false;
+    st2.checked = true;
+    st1.disabled = true;
+    stInfo.style.display = 'block';
+    stInfo.textContent = '✅ تم التحديد تلقائياً: خريج — لأن فئتك العمرية 31-40';
 
-  } else {
-    // ── 18-35: يختار القطاع والوضع يتحدد بناءً عليه ──
-    sectorSel.disabled = false;
-    sectorSel.innerHTML = `
+  } else if (!rule.graduate) {
+    // ── 19-24: طالب إجباري ──
+    sector.innerHTML = `
       <option value="">اختر القطاع</option>
       <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض، علاج طبيعي...)</option>
       <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات، فنون تطبيقية...)</option>
       <option value="أدبي وإنساني">أدبي وإنساني (آداب، حقوق، تجارة، إعلام، تربية...)</option>
-      <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون جميلة...)</option>
-    `;
+      <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون جميلة...)</option>`;
+    sector.disabled = false;
+    st1.checked = true;
+    st2.disabled = true;
+    stInfo.style.display = 'block';
+    stInfo.textContent = '✅ تم التحديد تلقائياً: طالب — لأن فئتك العمرية 19-24';
+
+  } else {
+    // ── 25-30: الاتنين متاحين ──
+    sector.innerHTML = `
+      <option value="">اختر القطاع</option>
+      <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض، علاج طبيعي...)</option>
+      <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات، فنون تطبيقية...)</option>
+      <option value="أدبي وإنساني">أدبي وإنساني (آداب، حقوق، تجارة، إعلام، تربية...)</option>
+      <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون جميلة...)</option>`;
+    sector.disabled = false;
+    stInfo.style.display = 'block';
+    stInfo.textContent = 'ℹ️ ' + rule.note;
   }
 }
 
-// ── عند اختيار القطاع ────────────────────────────────
+// القطاع في 25-30 مش بيغير الوضع — الوضع متاح للاتنين
 function onSectorChange() {
-  const age     = parseInt(document.getElementById('fa').value);
-  const sector  = document.getElementById('fsector').value;
-  const st1     = document.getElementById('st1');
-  const st2     = document.getElementById('st2');
-  const statusInfo = document.getElementById('status-info');
-
-  // reset
-  st1.checked = false; st2.checked = false;
-  st1.disabled = false; st2.disabled = false;
-  statusInfo.style.display = 'none';
-
-  if (!sector || age < 18 || age > 35) return;
-
-  const maxStudentAge = MAX_STUDENT_AGE[sector];
-
-  if (age > maxStudentAge) {
-    // سنه تجاوز الحد → خريج إجباري
-    st2.checked = true;
-    st1.disabled = true;
-    statusInfo.style.display = 'block';
-    statusInfo.textContent = `✅ بناءً على سنك والقطاع المختار، وضعك تلقائياً: خريج`;
-
-  } else if (age === maxStudentAge) {
-    // عند الحد بالظبط → الاتنين متاحين
-    statusInfo.style.display = 'block';
-    statusInfo.textContent = `ℹ️ سنك عند حد التخرج — اختر وضعك الفعلي (طالب أو خريج)`;
-
-  } else {
-    // تحت الحد → طالب فقط
-    st1.checked = true;
-    st2.disabled = true;
-    statusInfo.style.display = 'block';
-    statusInfo.textContent = `✅ بناءً على سنك والقطاع المختار، وضعك تلقائياً: طالب`;
-  }
+  // مفيش منطق إضافي هنا — الوضع اتحدد بالكامل من onAgeChange
+  // بس نتأكد إن القطاع اتاختار
 }
 
 // ══════════════════════════════════════════════════════
@@ -530,28 +514,21 @@ const SECS = [
   }
 ];
 
-const TOTAL = SECS.reduce((s,sec) => s + sec.qs.length, 0);
+const TOTAL = SECS.reduce((s,sec)=>s+sec.qs.length,0);
 
 function render(){
-  const c = document.getElementById('qc');
-  c.innerHTML = '';
-  let gi = 0;
-  SECS.forEach(sec => {
-    const sh = document.createElement('div');
-    sh.className = 'sec-head';
-    sh.innerHTML = `<span class="sec-icon">${sec.icon}</span>
+  const c=document.getElementById('qc'); c.innerHTML=''; let gi=0;
+  SECS.forEach(sec=>{
+    const sh=document.createElement('div'); sh.className='sec-head';
+    sh.innerHTML=`<span class="sec-icon">${sec.icon}</span>
       <div class="sec-info"><h3>${sec.title}</h3><p>${sec.desc}</p></div>`;
     c.appendChild(sh);
-    const lw = document.createElement('div');
-    lw.className = 'lwrap';
-    lw.innerHTML = `<div class="lhead">
-      <span>العبارة</span><span>أوافق</span><span>محايد</span><span>لا أوافق</span>
-    </div>`;
-    sec.qs.forEach(q => {
-      const i = gi;
-      const r = document.createElement('div');
-      r.className = 'qrow'; r.id = 'r'+i;
-      r.innerHTML = `
+    const lw=document.createElement('div'); lw.className='lwrap';
+    lw.innerHTML=`<div class="lhead"><span>العبارة</span><span>أوافق</span><span>محايد</span><span>لا أوافق</span></div>`;
+    sec.qs.forEach(q=>{
+      const i=gi; const r=document.createElement('div');
+      r.className='qrow'; r.id='r'+i;
+      r.innerHTML=`
         <div class="qtxt"><span class="qnum">Q-${i+1}</span><span>${q}</span></div>
         <div class="qcell"><input type="radio" name="q${i}" value="3" onchange="onA(${i})"></div>
         <div class="qcell"><input type="radio" name="q${i}" value="2" onchange="onA(${i})"></div>
@@ -561,8 +538,7 @@ function render(){
           <label class="mob-opt"><input type="radio" name="q${i}" value="2" onchange="onA(${i})"><span>محايد</span></label>
           <label class="mob-opt"><input type="radio" name="q${i}" value="1" onchange="onA(${i})"><span>لا أوافق</span></label>
         </div>`;
-      lw.appendChild(r);
-      gi++;
+      lw.appendChild(r); gi++;
     });
     c.appendChild(lw);
   });
@@ -571,7 +547,7 @@ function render(){
 function onA(i){
   document.getElementById('r'+i).classList.remove('error');
   document.getElementById('r'+i).classList.add('answered');
-  let done = 0;
+  let done=0;
   for(let j=0;j<TOTAL;j++) if(document.querySelector(`input[name="q${j}"]:checked`)) done++;
   document.getElementById('pf').style.width=(done/TOTAL*100)+'%';
   document.getElementById('pt').textContent=done+' / '+TOTAL;
@@ -579,7 +555,7 @@ function onA(i){
 
 const MAX=600; let rem=MAX,tRef=null,t0=null;
 function startTimer(){
-  t0=Date.now();rem=MAX;drawTimer();
+  t0=Date.now(); rem=MAX; drawTimer();
   tRef=setInterval(()=>{rem--;drawTimer();if(rem<=0){clearInterval(tRef);showOv('m-timeout');}},1000);
 }
 function drawTimer(){
@@ -595,30 +571,25 @@ function drawTimer(){
 function pad(n){return String(n).padStart(2,'0');}
 
 function goSurvey(){
-  const age    = document.getElementById('fa').value;
+  const group  = document.getElementById('fa').value;
   const gen    = document.querySelector('input[name="gen"]:checked');
   const sector = document.getElementById('fsector').value;
   const status = document.querySelector('input[name="status"]:checked');
   const club   = document.getElementById('fclub').value;
   const watch  = document.getElementById('fwatch').value;
-
-  if(!age||!gen||!sector||!status||!club||!watch){
-    alert('⚠️ يُرجى إكمال جميع الحقول المطلوبة (المُشار إليها بـ *)');
-    return;
+  if(!group||!gen||!sector||!status||!club||!watch){
+    alert('⚠️ يُرجى إكمال جميع الحقول المطلوبة (المُشار إليها بـ *)'); return;
   }
   document.getElementById('lp').style.display='none';
   document.getElementById('sp').style.display='block';
-  window.scrollTo(0,0);
-  render();
-  startTimer();
+  window.scrollTo(0,0); render(); startTimer();
 }
 
 function doSubmit(){
   const missing=[];
   for(let i=0;i<TOTAL;i++){
     if(!document.querySelector(`input[name="q${i}"]:checked`)){
-      missing.push(i);
-      document.getElementById('r'+i).classList.add('error');
+      missing.push(i); document.getElementById('r'+i).classList.add('error');
     }
   }
   if(missing.length){
@@ -634,24 +605,18 @@ function doSubmit(){
     const sec=Math.round(elapsed);
     document.getElementById('fast-time').textContent=
       sec>=60?Math.floor(sec/60)+' دقيقة و'+(sec%60)+' ثانية':sec+' ثانية';
-    showOv('m-fast');
-    return;
+    showOv('m-fast'); return;
   }
   clearInterval(tRef);
-
-  const age = parseInt(document.getElementById('fa').value);
-
   const answers={};
   for(let i=0;i<TOTAL;i++){
     answers['q'+(i+1)]=parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
   }
-
   const data={
     surveyType:    'football',
     name:          document.getElementById('fn').value||'—',
     gender:        document.querySelector('input[name="gen"]:checked').value,
-    age:           age,
-    ageGroup:      getAgeGroup(age),
+    ageGroup:      document.getElementById('fa').value,
     sector:        document.getElementById('fsector').value,
     academicStatus:document.querySelector('input[name="status"]:checked').value,
     localClub:     document.getElementById('fclub').value,
@@ -660,7 +625,6 @@ function doSubmit(){
     timeTakenSec:  Math.round((Date.now()-t0)/1000),
     answers
   };
-
   showOv('m-success');
   fetch(SCRIPT_URL,{
     method:'POST',mode:'no-cors',
@@ -678,7 +642,7 @@ function doReset(){
   }
   document.getElementById('pf').style.width='0%';
   document.getElementById('pt').textContent='0 / '+TOTAL;
-  rem=MAX;t0=Date.now();drawTimer();
+  rem=MAX; t0=Date.now(); drawTimer();
   tRef=setInterval(()=>{rem--;drawTimer();if(rem<=0){clearInterval(tRef);showOv('m-timeout');}},1000);
   window.scrollTo(0,0);
 }

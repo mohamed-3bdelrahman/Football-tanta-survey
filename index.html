@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>استبيان كرة القدم المصرية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0d1b2a;--navy2:#1b2a3b;--navy3:#1e3a5f;
+  --red:#c0392b;--red2:#e74c3c;--gold:#f39c12;
+  --white:#f0f4f8;--muted:#8ca0b3;--green:#27ae60;
+  --border:rgba(192,57,43,0.25);--card-bg:rgba(27,42,59,0.85)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);min-height:100vh;
+  background-image:radial-gradient(ellipse at 0% 0%,rgba(192,57,43,.12) 0%,transparent 45%),
+  radial-gradient(ellipse at 100% 100%,rgba(30,58,95,.5) 0%,transparent 50%)}
+
+#lp{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.brand{text-align:center;margin-bottom:36px}
+.brand-icon{font-size:58px;line-height:1;margin-bottom:12px;filter:drop-shadow(0 0 18px rgba(192,57,43,.55))}
+.brand h1{font-size:1.95rem;font-weight:900}
+.brand p{color:var(--muted);font-size:.88rem;margin-top:5px}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:18px;padding:34px 30px;
+  width:100%;max-width:560px;box-shadow:0 20px 60px rgba(0,0,0,.45);backdrop-filter:blur(6px)}
+.card-title{font-size:1rem;font-weight:700;color:var(--red2);margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.83rem;font-weight:600;color:var(--muted);margin-bottom:6px}
+.req{color:var(--red2)}
+.field input,.field select{width:100%;background:rgba(13,27,42,.7);border:1px solid rgba(255,255,255,.09);
+  border-radius:9px;padding:11px 14px;color:var(--white);font-family:'Cairo',sans-serif;
+  font-size:.9rem;outline:none;transition:border-color .2s;appearance:none}
+.field input:focus,.field select:focus{border-color:var(--red2)}
+.field select option{background:var(--navy2)}
+.field select:disabled{opacity:.45;cursor:not-allowed}
+.gr{display:flex;gap:10px}
+.go{flex:1;position:relative}
+.go input[type=radio]{position:absolute;opacity:0;width:0;height:0}
+.go label{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px;
+  background:rgba(13,27,42,.7);border:1px solid rgba(255,255,255,.09);border-radius:9px;
+  cursor:pointer;font-size:.9rem;font-weight:600;color:var(--muted);transition:all .2s;margin-bottom:0}
+.go input:checked+label{background:rgba(192,57,43,.18);border-color:var(--red2);color:var(--red2)}
+.go input:disabled+label{opacity:.35;cursor:not-allowed;pointer-events:none}
+
+.age-warn{display:none;margin-bottom:14px;padding:10px 14px;background:rgba(231,76,60,.1);
+  border:1px solid rgba(231,76,60,.35);border-radius:9px;font-size:.82rem;color:#e74c3c;line-height:1.6}
+.auto-info{display:none;margin-top:6px;padding:7px 12px;background:rgba(243,156,18,.08);
+  border:1px solid rgba(243,156,18,.25);border-radius:8px;font-size:.78rem;color:var(--gold);line-height:1.6}
+
+.note{margin-top:16px;padding:12px 15px;background:rgba(243,156,18,.08);
+  border:1px solid rgba(243,156,18,.3);border-radius:9px;font-size:.81rem;color:var(--gold);line-height:1.7;text-align:center}
+.btn-main{width:100%;margin-top:14px;padding:14px;background:var(--red);color:#fff;border:none;
+  border-radius:10px;font-family:'Cairo',sans-serif;font-size:.98rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-main:hover{background:var(--red2);transform:translateY(-1px);box-shadow:0 8px 22px rgba(192,57,43,.4)}
+
+/* ── Survey ── */
+#sp{display:none;min-height:100vh;padding-bottom:60px}
+.tsticky{position:sticky;top:0;z-index:100;background:var(--navy2);border-bottom:2px solid var(--border);
+  padding:11px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  box-shadow:0 4px 20px rgba(0,0,0,.35)}
+.tlabel{font-size:.8rem;color:var(--muted);font-weight:600;white-space:nowrap}
+.tclock{font-size:1.55rem;font-weight:900;color:var(--green);letter-spacing:3px;
+  font-variant-numeric:tabular-nums;transition:color .4s}
+.tclock.warn{color:var(--gold)}.tclock.danger{color:var(--red2);animation:blink .8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.ttrack{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.tbar{height:100%;width:100%;background:var(--green);border-radius:3px;transition:width 1s linear,background .4s}
+.swrap{max-width:780px;margin:0 auto;padding:28px 18px 0}
+.stitle{text-align:center;margin-bottom:22px}
+.stitle h2{font-size:1.4rem;font-weight:900}
+.stitle p{color:var(--muted);font-size:.86rem;margin-top:5px;line-height:1.6}
+.prow{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.ptrack{flex:1;height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.pfill{height:100%;width:0%;background:linear-gradient(90deg,var(--red),var(--gold));border-radius:3px;transition:width .3s}
+.ptxt{font-size:.79rem;color:var(--muted);font-weight:700;white-space:nowrap}
+.sec-head{display:flex;align-items:flex-start;gap:12px;background:var(--navy3);
+  border:1px solid var(--border);border-radius:12px 12px 0 0;padding:14px 18px;margin-top:26px}
+.sec-icon{font-size:1.35rem;margin-top:2px}
+.sec-info h3{font-size:.98rem;font-weight:800;color:var(--red2)}
+.sec-info p{font-size:.79rem;color:var(--muted);margin-top:3px;line-height:1.55}
+.lwrap{background:var(--card-bg);border:1px solid var(--border);border-top:none;
+  border-radius:0 0 12px 12px;overflow:hidden;margin-bottom:4px}
+.lhead{display:grid;grid-template-columns:1fr 96px 96px 96px;background:rgba(13,27,42,.55);
+  padding:9px 16px;gap:6px;border-bottom:1px solid rgba(255,255,255,.05)}
+.lhead span{font-size:.77rem;font-weight:700;color:var(--muted);text-align:center}
+.lhead span:first-child{text-align:right}
+.qrow{display:grid;grid-template-columns:1fr 96px 96px 96px;align-items:center;
+  padding:12px 16px;gap:6px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s}
+.qrow:last-child{border-bottom:none}
+.qrow:hover{background:rgba(255,255,255,.02)}
+.qrow.answered{background:rgba(39,174,96,.04)}
+.qrow.error{background:rgba(192,57,43,.09)}
+.qrow.error .qtxt{color:var(--red2)}
+.qtxt{font-size:.87rem;line-height:1.65;display:flex;gap:8px;align-items:flex-start}
+.qnum{display:inline-flex;align-items:center;justify-content:center;
+  min-width:50px;height:24px;padding:0 8px;background:var(--red);color:#fff;border-radius:6px;
+  font-size:.72rem;font-weight:700;margin-top:2px;letter-spacing:.5px;direction:ltr;white-space:nowrap}
+.qcell{display:flex;align-items:center;justify-content:center}
+.qcell input[type=radio]{appearance:none;-webkit-appearance:none;width:21px;height:21px;
+  border:2px solid rgba(255,255,255,.18);border-radius:50%;cursor:pointer;position:relative;transition:all .2s}
+.qcell input[type=radio]:checked{border-color:var(--red2);background:var(--red2)}
+.qcell input[type=radio]:checked::after{content:'';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);width:7px;height:7px;background:#fff;border-radius:50%}
+.qcell input[type=radio]:hover:not(:checked){border-color:var(--red)}
+.sub-area{text-align:center;margin-top:28px}
+.btn-sub{padding:14px 46px;background:var(--red);color:#fff;border:none;border-radius:10px;
+  font-family:'Cairo',sans-serif;font-size:.98rem;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-sub:hover{background:var(--red2);transform:translateY(-1px);box-shadow:0 8px 22px rgba(192,57,43,.4)}
+.sub-note{margin-top:9px;font-size:.8rem;color:var(--muted)}
+.mob-choices{display:none}
+
+/* ── Modals ── */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:999;
+  align-items:center;justify-content:center;padding:20px}
+.ov.on{display:flex}
+.modal{background:var(--navy2);border:1px solid var(--border);border-radius:18px;padding:38px 30px;
+  max-width:450px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.55);animation:popIn .28s ease}
+@keyframes popIn{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-icon{font-size:50px;margin-bottom:12px}
+.modal h3{font-size:1.2rem;font-weight:800;margin-bottom:10px}
+.modal p{color:var(--muted);font-size:.87rem;line-height:1.75;margin-bottom:20px}
+.modal.dm{border-color:rgba(231,76,60,.4)}.modal.dm h3{color:var(--red2)}
+.modal.sm{border-color:rgba(39,174,96,.35)}.modal.sm h3{color:var(--green)}
+.mb{padding:11px 26px;background:var(--red);color:#fff;border:none;border-radius:9px;
+  font-family:'Cairo',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .2s;margin:3px}
+.mb:hover{background:var(--red2)}
+
+/* ══ MOBILE ══ */
+@media(max-width:580px){
+  .lhead{display:none}
+  .qrow{display:flex;flex-direction:column;gap:12px;padding:14px 12px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .qcell{display:none}
+  .mob-choices{display:flex;justify-content:space-between;gap:6px}
+  .mob-opt{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;
+    background:rgba(13,27,42,.6);border:1.5px solid rgba(255,255,255,.08);border-radius:10px;
+    padding:10px 6px;cursor:pointer;transition:all .2s}
+  .mob-opt input[type=radio]{appearance:none;-webkit-appearance:none;width:22px;height:22px;
+    border:2px solid rgba(255,255,255,.2);border-radius:50%;position:relative;transition:all .2s;cursor:pointer;flex-shrink:0}
+  .mob-opt input[type=radio]:checked{border-color:var(--red2);background:var(--red2)}
+  .mob-opt input[type=radio]:checked::after{content:'';position:absolute;top:50%;left:50%;
+    transform:translate(-50%,-50%);width:7px;height:7px;background:#fff;border-radius:50%}
+  .mob-opt span{font-size:.72rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.3}
+  .mob-opt:has(input:checked){background:rgba(192,57,43,.15);border-color:var(--red2)}
+  .mob-opt:has(input:checked) span{color:var(--red2)}
+  .card{padding:22px 16px}.tclock{font-size:1.2rem}
+  .stitle h2{font-size:1.15rem}.sec-info h3{font-size:.9rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LANDING ══ -->
+<div id="lp">
+  <div class="brand">
+    <div class="brand-icon">⚽</div>
+    <h1>استبيان كرة القدم المصرية</h1>
+    <p>بحث في الوعي الرياضي والتعصب الكروي — تحت إشراف د. آيات صبحي</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 البيانات الشخصية</div>
+
+    <!-- الاسم -->
+    <div class="field">
+      <label>الاسم <span style="color:var(--muted);font-size:.77rem">(اختياري)</span></label>
+      <input type="text" id="fn" placeholder="اكتب اسمك هنا...">
+    </div>
+
+    <!-- السن -->
+    <div class="field">
+      <label>السن <span class="req">*</span></label>
+      <select id="fa" onchange="onAgeChange()">
+        <option value="">اختر سنك</option>
+      </select>
+    </div>
+
+    <!-- تحذير أقل من 18 -->
+    <div class="age-warn" id="age-warn">
+      ⚠️ بما أن سنك <strong>أقل من 18</strong>، تم تحديد قطاعك تلقائياً كـ <strong>ثانوي</strong> ووضعك كـ <strong>طالب</strong>.
+    </div>
+
+    <!-- النوع -->
+    <div class="field">
+      <label>النوع <span class="req">*</span></label>
+      <div class="gr">
+        <div class="go"><input type="radio" name="gen" id="gm" value="ذكر"><label for="gm">👨 ذكر</label></div>
+        <div class="go"><input type="radio" name="gen" id="gf" value="أنثى"><label for="gf">👩 أنثى</label></div>
+      </div>
+    </div>
+
+    <!-- القطاع الدراسي -->
+    <div class="field">
+      <label>القطاع الدراسي <span class="req">*</span></label>
+      <select id="fsector" onchange="onSectorChange()" disabled>
+        <option value="">اختر سنك أولاً</option>
+        <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض، علاج طبيعي...)</option>
+        <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات، فنون تطبيقية...)</option>
+        <option value="أدبي وإنساني">أدبي وإنساني (آداب، حقوق، تجارة، إعلام، تربية...)</option>
+        <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون جميلة...)</option>
+      </select>
+      <div class="auto-info" id="sector-info"></div>
+    </div>
+
+    <!-- الوضع الأكاديمي -->
+    <div class="field">
+      <label>الوضع الأكاديمي <span class="req">*</span></label>
+      <div class="gr">
+        <div class="go">
+          <input type="radio" name="status" id="st1" value="طالب">
+          <label for="st1">🎓 طالب</label>
+        </div>
+        <div class="go">
+          <input type="radio" name="status" id="st2" value="خريج">
+          <label for="st2">📜 خريج</label>
+        </div>
+      </div>
+      <div class="auto-info" id="status-info"></div>
+    </div>
+
+    <!-- النادي المفضل محلياً -->
+    <div class="field">
+      <label>النادي المفضل محلياً <span class="req">*</span></label>
+      <select id="fclub">
+        <option value="">اختر ناديك المفضل</option>
+        <option value="الأهلي">الأهلي</option>
+        <option value="الزمالك">الزمالك</option>
+        <option value="نادي جماهيري آخر">نادي جماهيري آخر (بيراميدز، الإسماعيلي...)</option>
+        <option value="لا أشجع أندية محلية">لا أشجع أندية محلية</option>
+      </select>
+    </div>
+
+    <!-- النادي العالمي اختياري -->
+    <div class="field">
+      <label>النادي المفضل عالمياً <span style="color:var(--muted);font-size:.77rem">(اختياري)</span></label>
+      <select id="fwclub">
+        <option value="—">تجاوز هذا السؤال</option>
+        <option value="ريال مدريد">ريال مدريد</option>
+        <option value="برشلونة">برشلونة</option>
+        <option value="مانشستر سيتي">مانشستر سيتي</option>
+        <option value="ليفربول">ليفربول</option>
+        <option value="مانشستر يونايتد">مانشستر يونايتد</option>
+        <option value="باريس سان جيرمان">باريس سان جيرمان</option>
+        <option value="بايرن ميونخ">بايرن ميونخ</option>
+        <option value="يوفنتوس">يوفنتوس</option>
+        <option value="نادي آخر">نادي آخر</option>
+        <option value="لا أتابع كرة عالمية">لا أتابع كرة عالمية</option>
+      </select>
+    </div>
+
+    <!-- معدل المتابعة -->
+    <div class="field">
+      <label>معدل متابعتك الأسبوعية للكرة <span class="req">*</span></label>
+      <select id="fwatch">
+        <option value="">اختر معدل متابعتك</option>
+        <option value="أقل من مباراة أسبوعياً">أقل من مباراة أسبوعياً</option>
+        <option value="من 1 إلى 3 مباريات أسبوعياً">من 1 إلى 3 مباريات أسبوعياً</option>
+        <option value="متابع دائم لكل الأحداث">متابع دائم لكل الأحداث</option>
+      </select>
+    </div>
+
+    <div class="note">
+      ⏱️ بعد الضغط على "ابدأ" سيُشغَّل مؤقت مدته <strong>10 دقائق</strong><br>
+      الاستبيان المكتمل في <strong>أقل من دقيقة</strong> لن يُقبَل ولن يُرسَل
+    </div>
+
+    <button class="btn-main" onclick="goSurvey()">ابدأ الاستبيان الآن ←</button>
+  </div>
+</div>
+
+<!-- ══ SURVEY ══ -->
+<div id="sp">
+  <div class="tsticky">
+    <span class="tlabel">⏱️ الوقت المتبقي</span>
+    <span class="tclock" id="tc">10:00</span>
+    <div class="ttrack"><div class="tbar" id="tb"></div></div>
+  </div>
+  <div class="swrap">
+    <div class="stitle">
+      <h2>استبيان الوعي الرياضي وكرة القدم المصرية</h2>
+      <p>يُرجى قراءة كل عبارة بعناية واختيار الإجابة التي تعبّر عن رأيك الشخصي بصدق وموضوعية</p>
+    </div>
+    <div class="prow">
+      <div class="ptrack"><div class="pfill" id="pf"></div></div>
+      <span class="ptxt" id="pt">0 / 25</span>
+    </div>
+    <div id="qc"></div>
+    <div class="sub-area">
+      <button class="btn-sub" onclick="doSubmit()">إرسال الاستبيان نهائياً ✓</button>
+      <p class="sub-note">تأكد من الإجابة على جميع الأسئلة قبل الإرسال</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+<div class="ov" id="m-fast"><div class="modal dm">
+  <div class="modal-icon">⚠️</div><h3>استبيان غير مقبول</h3>
+  <p>أكملتَ الاستبيان في <strong id="fast-time"></strong> فقط.<br><br>
+  الحد الأدنى للإجابة هو <strong>دقيقة كاملة</strong> لضمان موثوقية البيانات البحثية.<br><br>
+  لن تُرسَل هذه البيانات. يُرجى إعادة الإجابة بتأنٍّ.</p>
+  <button class="mb" onclick="doReset()">إعادة المحاولة</button>
+</div></div>
+
+<div class="ov" id="m-timeout"><div class="modal dm">
+  <div class="modal-icon">⏰</div><h3>انتهى الوقت المحدد</h3>
+  <p>انتهت العشر دقائق المخصصة للاستبيان.<br>يُرجى إعادة البداية والإجابة بتركيز أكبر.</p>
+  <button class="mb" onclick="location.reload()">إعادة البداية</button>
+</div></div>
+
+<div class="ov" id="m-incomplete"><div class="modal dm">
+  <div class="modal-icon">📝</div><h3>أسئلة غير مكتملة</h3>
+  <p id="incomplete-msg"></p>
+  <button class="mb" onclick="closeOv('m-incomplete')">حسناً، سأكملها</button>
+</div></div>
+
+<div class="ov" id="m-success"><div class="modal sm">
+  <div class="modal-icon">✅</div><h3>تم الإرسال بنجاح!</h3>
+  <p>شكراً لمشاركتك 🙏<br>تم تسجيل بياناتك في قاعدة البيانات البحثية بنجاح.</p>
+  <button class="mb" onclick="location.reload()">إغلاق</button>
+</div></div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxu9lGLJPjBE-uN3eDyENdpMNhOueqU7bxRSr7j1KTM4NAY-J1vPiYJvhUuDDtj-ouG/exec';
+
+// ══════════════════════════════════════════════════════
+//  منطق السن والوضع الأكاديمي
+// ══════════════════════════════════════════════════════
+
+// أقصى سن كطالب لكل قطاع = سن التخرج الطبيعي + 4 سنين رسوب
+// طبي:    18 + 5 (متوسط) + 4 = 27
+// هندسي:  18 + 4 (متوسط) + 4 = 26
+// أدبي:   18 + 4           + 4 = 26
+// رياضي:  18 + 4           + 4 = 26
+// ثانوي:  15-17 فقط (طالب دائماً)
+
+const MAX_STUDENT_AGE = {
+  'طبي وصحي':       27,
+  'هندسي وتكنولوجي': 26,
+  'أدبي وإنساني':    26,
+  'رياضي وفني':      26,
+};
+
+// الفئة العمرية للـ SPSS (مستقلة — بتتحدد من السن فقط)
+function getAgeGroup(age) {
+  if (age < 18)  return 'أقل من 18 سنة';
+  if (age <= 24) return 'من 18 إلى 24 سنة';
+  if (age <= 35) return 'من 25 إلى 35 سنة';
+  return 'أكبر من 35 سنة';
+}
+
+// ── بناء قائمة السن ──────────────────────────────────
+(function(){
+  const s = document.getElementById('fa');
+  for(let i = 15; i <= 50; i++){
+    const o = document.createElement('option');
+    o.value = i; o.textContent = i + ' سنة';
+    s.appendChild(o);
+  }
+})();
+
+// ── عند تغيير السن ───────────────────────────────────
+function onAgeChange() {
+  const age = parseInt(document.getElementById('fa').value);
+  const sectorSel  = document.getElementById('fsector');
+  const st1        = document.getElementById('st1');   // طالب
+  const st2        = document.getElementById('st2');   // خريج
+  const warn       = document.getElementById('age-warn');
+  const sectorInfo = document.getElementById('sector-info');
+  const statusInfo = document.getElementById('status-info');
+
+  // reset
+  sectorSel.disabled = true;
+  sectorSel.value = '';
+  st1.checked = false; st2.checked = false;
+  st1.disabled = false; st2.disabled = false;
+  warn.style.display = 'none';
+  sectorInfo.style.display = 'none';
+  statusInfo.style.display = 'none';
+
+  if (!age) return;
+
+  if (age < 18) {
+    // ── ثانوي إجباري ──
+    warn.style.display = 'block';
+    sectorSel.disabled = true;
+    sectorSel.innerHTML = '<option value="ثانوي">ثانوي</option>';
+    sectorSel.value = 'ثانوي';
+    st1.checked = true;          // طالب إجباري
+    st2.disabled = true;         // خريج مش متاح
+    statusInfo.style.display = 'block';
+    statusInfo.textContent = '✅ تم تحديد وضعك تلقائياً: طالب — لأن سنك أقل من 18';
+
+  } else if (age > 35) {
+    // ── خريج إجباري ──
+    sectorSel.disabled = false;
+    sectorSel.innerHTML = `
+      <option value="">اختر القطاع</option>
+      <option value="طبي وصحي">طبي وصحي</option>
+      <option value="هندسي وتكنولوجي">هندسي وتكنولوجي</option>
+      <option value="أدبي وإنساني">أدبي وإنساني</option>
+      <option value="رياضي وفني">رياضي وفني</option>
+    `;
+    st2.checked = true;          // خريج إجباري
+    st1.disabled = true;         // طالب مش متاح
+    statusInfo.style.display = 'block';
+    statusInfo.textContent = '✅ تم تحديد وضعك تلقائياً: خريج — لأن سنك أكبر من 35';
+
+  } else {
+    // ── 18-35: يختار القطاع والوضع يتحدد بناءً عليه ──
+    sectorSel.disabled = false;
+    sectorSel.innerHTML = `
+      <option value="">اختر القطاع</option>
+      <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض، علاج طبيعي...)</option>
+      <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات، فنون تطبيقية...)</option>
+      <option value="أدبي وإنساني">أدبي وإنساني (آداب، حقوق، تجارة، إعلام، تربية...)</option>
+      <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون جميلة...)</option>
+    `;
+  }
+}
+
+// ── عند اختيار القطاع ────────────────────────────────
+function onSectorChange() {
+  const age     = parseInt(document.getElementById('fa').value);
+  const sector  = document.getElementById('fsector').value;
+  const st1     = document.getElementById('st1');
+  const st2     = document.getElementById('st2');
+  const statusInfo = document.getElementById('status-info');
+
+  // reset
+  st1.checked = false; st2.checked = false;
+  st1.disabled = false; st2.disabled = false;
+  statusInfo.style.display = 'none';
+
+  if (!sector || age < 18 || age > 35) return;
+
+  const maxStudentAge = MAX_STUDENT_AGE[sector];
+
+  if (age > maxStudentAge) {
+    // سنه تجاوز الحد → خريج إجباري
+    st2.checked = true;
+    st1.disabled = true;
+    statusInfo.style.display = 'block';
+    statusInfo.textContent = `✅ بناءً على سنك والقطاع المختار، وضعك تلقائياً: خريج`;
+
+  } else if (age === maxStudentAge) {
+    // عند الحد بالظبط → الاتنين متاحين
+    statusInfo.style.display = 'block';
+    statusInfo.textContent = `ℹ️ سنك عند حد التخرج — اختر وضعك الفعلي (طالب أو خريج)`;
+
+  } else {
+    // تحت الحد → طالب فقط
+    st1.checked = true;
+    st2.disabled = true;
+    statusInfo.style.display = 'block';
+    statusInfo.textContent = `✅ بناءً على سنك والقطاع المختار، وضعك تلقائياً: طالب`;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  الأسئلة
+// ══════════════════════════════════════════════════════
+const SECS = [
+  {
+    icon:"⚖️",
+    title:"المحور الأول: الأندية والعدالة التنظيمية",
+    desc:"تتناول هذه الفقرة آراءكم حول التوازن والعدالة في المنظومة الكروية المصرية.",
+    qs:[
+      "لو اتحذفت كل أندية المؤسسات من الدوري، المستوى العام هيتحسن تلقائياً",
+      "الاستثمار الخاص في الأندية بيخلق تفاوتاً في الإمكانات أكثر مما بيرفع مستوى المنافسة",
+      "أندية القاهرة بتاخد نصيباً من عوائد البث أكبر بكتير من حجمها الجغرافي الفعلي",
+      "الواسطة في اختيار ناشئي الأندية الكبيرة بتضيّع مواهب حقيقية في الأقاليم",
+      "تأجيل المباريات لصالح نادي معين بيتكرر بشكل واضح في الدوري المصري"
+    ]
+  },
+  {
+    icon:"🧢",
+    title:"المحور الثاني: اللاعبون والعقلية الاحترافية",
+    desc:"تستعرض هذه الفقرة آراءكم حول مستوى اللاعبين المصريين وعقليتهم الاحترافية.",
+    qs:[
+      "غالبية لاعبي الدوري المصري مش مؤهلين ذهنياً للاحتراف الخارجي حتى لو اتاحتلهم الفرصة",
+      "الأسعار المبالغ فيها للاعبين المصريين دليل على فشل الإدارة مش دليل على جودة اللاعب",
+      "اللاعب اللي بيتنقل كتير بين الأندية بيثبت إنه بيدور على الفلوس مش على البطولات",
+      "الإعلام الرياضي المصري صنع نجوماً وهمية باللسان أكتر مما صنع نجوماً حقيقية بالأداء",
+      "اللاعب اللي يلعب في الأهلي أو الزمالك وينتقل لنادي أصغر مستواه بيتراجع في الغالب"
+    ]
+  },
+  {
+    icon:"🔥",
+    title:"المحور الثالث: التعصب الكروي والخطاب الإعلامي",
+    desc:"تتناول هذه الفقرة ظاهرة التعصب الكروي وتأثير الإعلام على الجماهير.",
+    qs:[
+      "المذيع الرياضي المصري بيحرّض على التعصب بشكل مقصود عشان يرفع نسبة المشاهدة",
+      "التريند والهاشتاج على السوشيال ميديا بيحوّل خسارة عادية لأزمة قومية",
+      "المشجع المصري بيفرح بخسارة منافسه أكتر من فرحه بانتصار فريقه",
+      "البرامج الرياضية التحريضية أخطر على المجتمع من أي مباراة عنيفة",
+      "التعصب الكروي في مصر وصل لمرحلة إنه بيأثر على علاقات الناس في الشغل والأسرة"
+    ]
+  },
+  {
+    icon:"🔭",
+    title:"المحور الرابع: رؤية مستقبلية للمنظومة الكروية",
+    desc:"تستعرض هذه الفقرة توقعاتكم ورؤيتكم لمستقبل كرة القدم المصرية.",
+    qs:[
+      "مصر مش هتتأهل للمونديال بشكل منتظم في ظل المنظومة الإدارية الحالية",
+      "الدوري المصري هيفضل يتراجع طالما مفيش فصل حقيقي بين الإدارة الرياضية والسياسة",
+      "مصر خسرت ريادتها الكروية الأفريقية بشكل شبه نهائي لصالح الدوريات الخليجية والمغربية",
+      "أي إنجاز للمنتخب المصري في الفترة الأخيرة كان مجهود أفراد مش تخطيط مؤسسي",
+      "ظروف الكرة المصرية الحالية بتمنع ظهور نجم بحجم محمد صلاح من الجيل الجديد"
+    ]
+  },
+  {
+    icon:"🛠️",
+    title:"المحور الخامس: آليات التطوير والإصلاح المقترحة",
+    desc:"تتناول هذه الفقرة الحلول والمقترحات لتطوير منظومة كرة القدم المصرية.",
+    qs:[
+      "تحويل الأندية لشركات مساهمة هيفيد الكرة المصرية أكتر من إنه يضرها",
+      "سقف الرواتب حل عادل ولو طُبّق صح هيوقف نزيف الإفلاس في الأندية الصغيرة",
+      "حكام أجانب وإدارة أجنبية للـ VAR هو الحل الوحيد لاستعادة ثقة الجمهور في التحكيم",
+      "صرف ميزانية الصفقات الكبيرة على كشافي مواهب في الأقاليم هيجيب نتائج أفضل على المدى البعيد",
+      "عودة الجماهير بالطاقة الاستيعابية الكاملة للملاعب هي الخطوة الأهم لرفع قيمة الدوري المصري"
+    ]
+  }
+];
+
+const TOTAL = SECS.reduce((s,sec) => s + sec.qs.length, 0);
+
+function render(){
+  const c = document.getElementById('qc');
+  c.innerHTML = '';
+  let gi = 0;
+  SECS.forEach(sec => {
+    const sh = document.createElement('div');
+    sh.className = 'sec-head';
+    sh.innerHTML = `<span class="sec-icon">${sec.icon}</span>
+      <div class="sec-info"><h3>${sec.title}</h3><p>${sec.desc}</p></div>`;
+    c.appendChild(sh);
+    const lw = document.createElement('div');
+    lw.className = 'lwrap';
+    lw.innerHTML = `<div class="lhead">
+      <span>العبارة</span><span>أوافق</span><span>محايد</span><span>لا أوافق</span>
+    </div>`;
+    sec.qs.forEach(q => {
+      const i = gi;
+      const r = document.createElement('div');
+      r.className = 'qrow'; r.id = 'r'+i;
+      r.innerHTML = `
+        <div class="qtxt"><span class="qnum">Q-${i+1}</span><span>${q}</span></div>
+        <div class="qcell"><input type="radio" name="q${i}" value="3" onchange="onA(${i})"></div>
+        <div class="qcell"><input type="radio" name="q${i}" value="2" onchange="onA(${i})"></div>
+        <div class="qcell"><input type="radio" name="q${i}" value="1" onchange="onA(${i})"></div>
+        <div class="mob-choices">
+          <label class="mob-opt"><input type="radio" name="q${i}" value="3" onchange="onA(${i})"><span>أوافق</span></label>
+          <label class="mob-opt"><input type="radio" name="q${i}" value="2" onchange="onA(${i})"><span>محايد</span></label>
+          <label class="mob-opt"><input type="radio" name="q${i}" value="1" onchange="onA(${i})"><span>لا أوافق</span></label>
+        </div>`;
+      lw.appendChild(r);
+      gi++;
+    });
+    c.appendChild(lw);
+  });
+}
+
+function onA(i){
+  document.getElementById('r'+i).classList.remove('error');
+  document.getElementById('r'+i).classList.add('answered');
+  let done = 0;
+  for(let j=0;j<TOTAL;j++) if(document.querySelector(`input[name="q${j}"]:checked`)) done++;
+  document.getElementById('pf').style.width=(done/TOTAL*100)+'%';
+  document.getElementById('pt').textContent=done+' / '+TOTAL;
+}
+
+const MAX=600; let rem=MAX,tRef=null,t0=null;
+function startTimer(){
+  t0=Date.now();rem=MAX;drawTimer();
+  tRef=setInterval(()=>{rem--;drawTimer();if(rem<=0){clearInterval(tRef);showOv('m-timeout');}},1000);
+}
+function drawTimer(){
+  const m=Math.floor(rem/60),s=rem%60;
+  const cl=document.getElementById('tc'),bar=document.getElementById('tb');
+  cl.textContent=pad(m)+':'+pad(s);
+  bar.style.width=(rem/MAX*100)+'%';
+  cl.classList.remove('warn','danger');
+  if(rem<=60){cl.classList.add('danger');bar.style.background='#e74c3c';}
+  else if(rem<=120){cl.classList.add('warn');bar.style.background='#f39c12';}
+  else{bar.style.background='#27ae60';}
+}
+function pad(n){return String(n).padStart(2,'0');}
+
+function goSurvey(){
+  const age    = document.getElementById('fa').value;
+  const gen    = document.querySelector('input[name="gen"]:checked');
+  const sector = document.getElementById('fsector').value;
+  const status = document.querySelector('input[name="status"]:checked');
+  const club   = document.getElementById('fclub').value;
+  const watch  = document.getElementById('fwatch').value;
+
+  if(!age||!gen||!sector||!status||!club||!watch){
+    alert('⚠️ يُرجى إكمال جميع الحقول المطلوبة (المُشار إليها بـ *)');
+    return;
+  }
+  document.getElementById('lp').style.display='none';
+  document.getElementById('sp').style.display='block';
+  window.scrollTo(0,0);
+  render();
+  startTimer();
+}
+
+function doSubmit(){
+  const missing=[];
+  for(let i=0;i<TOTAL;i++){
+    if(!document.querySelector(`input[name="q${i}"]:checked`)){
+      missing.push(i);
+      document.getElementById('r'+i).classList.add('error');
+    }
+  }
+  if(missing.length){
+    document.getElementById('incomplete-msg').textContent=
+      `يوجد ${missing.length} سؤال/أسئلة لم تُجب عليها. يُرجى الإجابة على جميع الأسئلة لضمان موثوقية البيانات.`;
+    showOv('m-incomplete');
+    document.getElementById('r'+missing[0]).scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const elapsed=(Date.now()-t0)/1000;
+  if(elapsed<60){
+    clearInterval(tRef);
+    const sec=Math.round(elapsed);
+    document.getElementById('fast-time').textContent=
+      sec>=60?Math.floor(sec/60)+' دقيقة و'+(sec%60)+' ثانية':sec+' ثانية';
+    showOv('m-fast');
+    return;
+  }
+  clearInterval(tRef);
+
+  const age = parseInt(document.getElementById('fa').value);
+
+  const answers={};
+  for(let i=0;i<TOTAL;i++){
+    answers['q'+(i+1)]=parseInt(document.querySelector(`input[name="q${i}"]:checked`).value);
+  }
+
+  const data={
+    surveyType:    'football',
+    name:          document.getElementById('fn').value||'—',
+    gender:        document.querySelector('input[name="gen"]:checked').value,
+    age:           age,
+    ageGroup:      getAgeGroup(age),
+    sector:        document.getElementById('fsector').value,
+    academicStatus:document.querySelector('input[name="status"]:checked').value,
+    localClub:     document.getElementById('fclub').value,
+    globalClub:    document.getElementById('fwclub').value||'—',
+    watchRate:     document.getElementById('fwatch').value,
+    timeTakenSec:  Math.round((Date.now()-t0)/1000),
+    answers
+  };
+
+  showOv('m-success');
+  fetch(SCRIPT_URL,{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  }).catch(err=>console.error('خطأ في الإرسال:',err));
+}
+
+function doReset(){
+  closeOv('m-fast');
+  for(let i=0;i<TOTAL;i++){
+    const ch=document.querySelector(`input[name="q${i}"]:checked`);
+    if(ch) ch.checked=false;
+    document.getElementById('r'+i).classList.remove('answered','error');
+  }
+  document.getElementById('pf').style.width='0%';
+  document.getElementById('pt').textContent='0 / '+TOTAL;
+  rem=MAX;t0=Date.now();drawTimer();
+  tRef=setInterval(()=>{rem--;drawTimer();if(rem<=0){clearInterval(tRef);showOv('m-timeout');}},1000);
+  window.scrollTo(0,0);
+}
+function showOv(id){document.getElementById(id).classList.add('on');}
+function closeOv(id){document.getElementById(id).classList.remove('on');}
+</script>
+</body>
+</html>

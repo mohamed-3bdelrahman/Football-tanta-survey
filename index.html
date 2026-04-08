@@ -191,17 +191,11 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
       </div>
     </div>
 
-    <div class="field">
-      <label>القطاع الدراسي <span class="req">*</span></label>
-     <select id="fsector" onchange="onSectorChange()"></select>
-        <option value="">اختر الفئة العمرية أولاً</option>
-        <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض، علاج طبيعي...)</option>
-        <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات، فنون تطبيقية...)</option>
-        <option value="أدبي وإنساني">أدبي وإنساني (آداب، حقوق، تجارة، إعلام، تربية...)</option>
-        <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون جميلة...)</option>
-      </select>
-      <div class="auto-info" id="status-info"></div>
-    </div>
+  <div class="field">
+  <label>القطاع الدراسي <span class="req">*</span></label>
+  <select id="fsector" onchange="onSectorChange()"></select>
+  <div class="auto-info" id="status-info"></div>
+</div>
 
     <div class="field">
       <label>الوضع الأكاديمي <span class="req">*</span></label>
@@ -325,35 +319,42 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1nHBDJgd9wsIU9vELJ
 function onAgeChange() {
   const group = document.getElementById('fa').value;
   const sector = document.getElementById('fsector');
-  const st1 = document.getElementById('st1'); // راديو طالب
-  const st2 = document.getElementById('st2'); // راديو خريج
+  const st1 = document.getElementById('st1'); 
+  const st2 = document.getElementById('st2'); 
   const warn = document.getElementById('age-warn');
+  const stInfo = document.getElementById('status-info');
 
-  // 1. تصفير وفتح كل حاجة عشان اليوزر يبدأ على نظافة
+  // تصفير كل حاجة
   sector.disabled = false;
   st1.disabled = false;
   st2.disabled = false;
   st1.checked = false;
   st2.checked = false;
   if(warn) warn.style.display = 'none';
+  
+  // أهم سطر: بيمسح الرسالة اللي كانت ظاهرة في الصورة (image_039f09)
+  if(stInfo) { 
+    stInfo.style.display = 'none'; 
+    stInfo.innerHTML = ''; 
+  }
 
-  if (!group) return;
+  if (!group) {
+    sector.innerHTML = '<option value="">اختر الفئة العمرية أولاً</option>';
+    return;
+  }
 
-  // 2. المنطق: لو الفئة هي (15-18) فقط
   if (group === '15-18') {
-    // القطاع فيه "ثانوي" بس
-    sector.innerHTML = `<option value="ثانوي">التعليم الثانوي (عام/فني)</option>`;
+    sector.innerHTML = '<option value="ثانوي">التعليم الثانوي (عام/فني)</option>';
     sector.value = 'ثانوي';
-    st1.checked = true; // طالب أوتوماتيك
-    st2.disabled = true; // مستحيل خريج جامعة وهو 17 سنة
-    
+    st1.checked = true;
+    st2.disabled = true;
     if(warn) {
       warn.style.display = 'block';
-      warn.innerHTML = "⚠️ فئتك العمرية (15-18) تم تحديد قطاعك كـ 'ثانوي' ووضعك كـ 'طالب'.";
+      warn.innerHTML = "⚠️ فئتك 15-18: تم تحديدك 'ثانوي' و 'طالب'.";
     }
   } 
-  // 3. أي فئة تانية (19-24 فأعلى) -> الثانوي اتمسح تماماً
   else {
+    // بناء الخيارات من جديد للفئات الكبيرة
     sector.innerHTML = `
       <option value="">اختر القطاع الدراسي</option>
       <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض...)</option>
@@ -361,8 +362,6 @@ function onAgeChange() {
       <option value="أدبي وإنساني">أدبي وإنساني (تجارة، حقوق، آداب، إعلام...)</option>
       <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون...)</option>
     `;
-    // حرية كاملة: لا تحديد تلقائي ولا رسائل صفراء ولا ثانوي في الاختيارات
-    if(warn) warn.style.display = 'none';
   }
 }
 // القطاع في 25-30 مش بيغير الوضع — الوضع متاح للاتنين

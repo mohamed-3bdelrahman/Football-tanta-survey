@@ -193,18 +193,24 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
 
   <div class="field">
   <label>القطاع الدراسي <span class="req">*</span></label>
-<select id="fsector" onchange="onSectorChange()"></select>
-  <div class="auto-info" id="status-info"></div>
+  <select id="fsector" onchange="onSectorChange()"></select>
+  <div id="sector-warn" style="display:none; margin-top:5px;"></div>
 </div>
 
-    <div class="field">
-      <label>الوضع الأكاديمي <span class="req">*</span></label>
-      <div class="gr">
-        <div class="go"><input type="radio" name="status" id="st1" value="طالب"><label for="st1">🎓 طالب</label></div>
-        <div class="go"><input type="radio" name="status" id="st2" value="خريج"><label for="st2">📜 خريج</label></div>
-      </div>
-      <div class="auto-info" id="status-info"></div>
+<div class="field">
+  <label>الوضع الأكاديمي <span class="req">*</span></label>
+  <div class="gr">
+    <div class="go">
+      <input type="radio" name="status" id="st1" value="طالب">
+      <label for="st1">🎓 طالب</label>
     </div>
+    <div class="go">
+      <input type="radio" name="status" id="st2" value="خريج">
+      <label for="st2">📜 خريج</label>
+    </div>
+  </div>
+  <div class="auto-info" id="status-info"></div>
+</div>
 
     <div class="field">
       <label>النادي المفضل محلياً <span class="req">*</span></label>
@@ -324,52 +330,38 @@ function onAgeChange() {
   const warn = document.getElementById('age-warn');
   const stInfo = document.getElementById('status-info');
 
-  // تنظيف أولي
+  // 1. تنظيف شامل للقائمة عشان متبقاش "ملزقة" في الصفحة
   sector.innerHTML = ""; 
-  sector.disabled = false;
-  st1.disabled = false;
-  st2.disabled = false;
-  st1.checked = false;
-  st2.checked = false;
+  
+  // 2. تصفير باقي الحقول
   if(warn) warn.style.display = 'none';
   if(stInfo) { stInfo.style.display = 'none'; stInfo.innerHTML = ''; }
+  st1.checked = false;
+  st2.checked = false;
+  st2.disabled = false;
 
   if (!group) {
+    // لازم نحطها جوه <option> عشان المتصفح ميرميهاش بره
     sector.innerHTML = '<option value="">اختر الفئة العمرية أولاً</option>';
     return;
   }
 
+  // 3. لو السن 15-18 (ثانوي)
   if (group === '15-18') {
-    // للسن الصغير: خيار واحد فقط
-    const opt = document.createElement("option");
-    opt.value = "ثانوي";
-    opt.text = "التعليم الثانوي (عام/فني)";
-    sector.add(opt);
-    
-    sector.value = "ثانوي";
+    sector.innerHTML = '<option value="ثانوي">التعليم الثانوي (عام/فني)</option>';
+    sector.value = 'ثانوي';
     st1.checked = true;
     st2.disabled = true;
-    if(warn) {
-      warn.style.display = 'block';
-      warn.innerHTML = "⚠️ فئتك 15-18: تم تحديدك 'ثانوي' و 'طالب'.";
-    }
   } 
+  // 4. لو السن أكبر (كليات) - ركز هنا في الـ <option>
   else {
-    // للسن الكبير: بنبني القائمة من الصفر
-    const sectors = [
-      {val: "", txt: "اختر القطاع الدراسي"},
-      {val: "طبي وصحي", txt: "طبي وصحي (طب، صيدلة، تمريض...)"},
-      {val: "هندسي وتكنولوجي", txt: "هندسي وتكنولوجي (هندسة، حاسبات...)"},
-      {val: "أدبي وإنساني", txt: "أدبي وإنساني (تجارة، حقوق، آداب، إعلام...)"},
-      {val: "رياضي وفني", txt: "رياضي وفني (تربية رياضية، فنون...)"}
-    ];
-    
-    sectors.forEach(s => {
-      const opt = document.createElement("option");
-      opt.value = s.val;
-      opt.text = s.txt;
-      sector.add(opt);
-    });
+    sector.innerHTML = `
+      <option value="">اختر القطاع الدراسي</option>
+      <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض...)</option>
+      <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات...)</option>
+      <option value="أدبي وإنساني">أدبي وإنساني (تجارة، حقوق، آداب، إعلام...)</option>
+      <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون...)</option>
+    `;
   }
 }
 // القطاع في 25-30 مش بيغير الوضع — الوضع متاح للاتنين

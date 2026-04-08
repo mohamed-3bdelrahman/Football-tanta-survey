@@ -325,19 +325,21 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1nHBDJgd9wsIU9vELJ
 function onAgeChange() {
   const group = document.getElementById('fa').value;
   const sector = document.getElementById('fsector');
-  const st1 = document.getElementById('st1'); // طالب
-  const st2 = document.getElementById('st2'); // خريج
+  const st1 = document.getElementById('st1'); // راديو طالب
+  const st2 = document.getElementById('st2'); // راديو خريج
   const warn = document.getElementById('age-warn');
   
-  // 1. إعادة تفعيل الخانات دايماً عشان اليوزر يختار براحته
+  // 1. تصفير وفتح كل الخانات فوراً عشان اليوزر يبدأ على نظافة
   sector.disabled = false;
   st1.disabled = false;
   st2.disabled = false;
+  st1.checked = false;
+  st2.checked = false;
   warn.style.display = 'none';
 
   if (!group) return;
 
-  // 2. تحديث خيارات القطاع الدراسي (إضافة ثانوي لكل الأعمار عشان لو حد لسه مخلصش)
+  // 2. تحديث قائمة القطاعات (ثانوي متاح للكل دايماً)
   sector.innerHTML = `
     <option value="">اختر القطاع الدراسي</option>
     <option value="ثانوي">التعليم الثانوي (عام/فني)</option>
@@ -347,21 +349,20 @@ function onAgeChange() {
     <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون...)</option>
   `;
 
-  // 3. ذكاء اصطناعي بسيط للتنبؤ بالوضع (بدون إجبار)
+  // 3. القيد الوحيد: لو أقل من 19 سنة (فئة 15-18)
   if (group === '15-18') {
-    sector.value = 'ثانوي';
-    st1.checked = true;
-    warn.innerHTML = "💡 تم اختيار 'ثانوي' و 'طالب' كفئة مقترحة لسنك، يمكنك تغييرهم إذا كنت في وضع مختلف.";
+    sector.value = 'ثانوي';   // بنثبت له ثانوي
+    st1.checked = true;      // بنثبت له طالب
+    st2.disabled = true;     // بنقفل عليه خريج (منطقياً مفيش خريج جامعة 17 سنة)
+    warn.innerHTML = "💡 تم تحديد 'ثانوي' و 'طالب' بما يتناسب مع فئتك العمرية.";
     warn.style.display = 'block';
   } 
-  else if (group === '19-24') {
-    st1.checked = true; // الأغلب طالب
-  } 
-  else if (group === '31-40') {
-    st2.checked = true; // الأغلب خريج
+  // 4. باقي الفئات (19-24، 25-30، إلخ) مفتوحة "على البحري"
+  else {
+    // الخانات مفتوحة ومفيش أي اختيار تلقائي.. اليوزر يختار بمزاجه
+    warn.style.display = 'none';
   }
 }
-
 // القطاع في 25-30 مش بيغير الوضع — الوضع متاح للاتنين
 function onSectorChange() {
   // مفيش منطق إضافي هنا — الوضع اتحدد بالكامل من onAgeChange

@@ -328,18 +328,22 @@ function onAgeChange() {
   const st1 = document.getElementById('st1'); // راديو طالب
   const st2 = document.getElementById('st2'); // راديو خريج
   const warn = document.getElementById('age-warn');
-  
-  // 1. تصفير وفتح كل الخانات فوراً عشان اليوزر يبدأ على نظافة
+  const stInfo = document.getElementById('status-info'); // الرسالة اللي بتطلع تحت
+
+  // 1. افتح كل حاجة وصفر أي اختيارات تلقائية مستفزة
   sector.disabled = false;
   st1.disabled = false;
   st2.disabled = false;
   st1.checked = false;
   st2.checked = false;
-  warn.style.display = 'none';
+  
+  // 2. اخفي أي رسائل "تم التحديد تلقائياً" قديمة
+  if(warn) warn.style.display = 'none';
+  if(stInfo) stInfo.style.display = 'none';
 
   if (!group) return;
 
-  // 2. تحديث قائمة القطاعات (ثانوي متاح للكل دايماً)
+  // 3. تحديث القائمة (عشان تظهر "ثانوي" للي محتاجها)
   sector.innerHTML = `
     <option value="">اختر القطاع الدراسي</option>
     <option value="ثانوي">التعليم الثانوي (عام/فني)</option>
@@ -349,18 +353,20 @@ function onAgeChange() {
     <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون...)</option>
   `;
 
-  // 3. القيد الوحيد: لو أقل من 19 سنة (فئة 15-18)
+  // 4. المنطق الوحيد (أقل من 19 سنة فقط)
   if (group === '15-18') {
-    sector.value = 'ثانوي';   // بنثبت له ثانوي
-    st1.checked = true;      // بنثبت له طالب
-    st2.disabled = true;     // بنقفل عليه خريج (منطقياً مفيش خريج جامعة 17 سنة)
-    warn.innerHTML = "💡 تم تحديد 'ثانوي' و 'طالب' بما يتناسب مع فئتك العمرية.";
-    warn.style.display = 'block';
+    sector.value = 'ثانوي';
+    st1.checked = true;
+    st2.disabled = true; // مفيش خريج في السن ده
+    if(stInfo) {
+      stInfo.style.display = 'block';
+      stInfo.textContent = '✅ تم التحديد تلقائياً: ثانوي — طالب';
+    }
   } 
-  // 4. باقي الفئات (19-24، 25-30، إلخ) مفتوحة "على البحري"
+  // 5. أي سن تاني (19-24 أو غيره) الكود مش هيلمس الاختيارات
   else {
-    // الخانات مفتوحة ومفيش أي اختيار تلقائي.. اليوزر يختار بمزاجه
-    warn.style.display = 'none';
+    // سيب اليوزر يختار بمزاجه "طالب" أو "خريج"
+    if(stInfo) stInfo.style.display = 'none';
   }
 }
 // القطاع في 25-30 مش بيغير الوضع — الوضع متاح للاتنين

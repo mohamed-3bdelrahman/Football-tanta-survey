@@ -168,16 +168,18 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--white);mi
     </div>
 
     <!-- الفئة العمرية — فئات واضحة بدون تداخل -->
-    <div class="field">
-      <label>الفئة العمرية <span class="req">*</span></label>
-      <select id="fa" onchange="onAgeChange()">
-        <option value="">اختر فئتك العمرية</option>
-        <option value="15-18">من 15 إلى 18 سنة</option>
-        <option value="19-24">من 19 إلى 24 سنة</option>
-        <option value="25-30">من 25 إلى 30 سنة</option>
-        <option value="31-40">من 31 إلى 40 سنة</option>
-      </select>
-    </div>
+   <div class="field">
+  <label>الفئة العمرية <span class="req">*</span></label>
+  <select id="fa" onchange="onAgeChange()">
+    <option value="">اختر فئتك العمرية</option>
+    <option value="15-18">من 15 إلى 18 سنة</option>
+    <option value="19-25">من 19 إلى 25 سنة</option>
+    <option value="26-29">من 26 إلى 29 سنة</option>
+    <option value="30-35">من 30 إلى 35 سنة</option>
+    <option value="35-40">من 35 إلى 40 سنة</option>
+    <option value="أكبر من 40">أكبر من 40 سنة</option>
+  </select>
+</div>
 
     <div class="age-warn" id="age-warn">
       ⚠️ بما أن فئتك العمرية <strong>15–18</strong>، تم تحديد قطاعك تلقائياً كـ <strong>ثانوي</strong> ووضعك كـ <strong>طالب</strong>.
@@ -325,43 +327,53 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1nHBDJgd9wsIU9vELJ
 function onAgeChange() {
   const group = document.getElementById('fa').value;
   const sector = document.getElementById('fsector');
-  const st1 = document.getElementById('st1'); 
-  const st2 = document.getElementById('st2'); 
+  const st1 = document.getElementById('st1');  // طالب
+  const st2 = document.getElementById('st2');  // خريج
   const warn = document.getElementById('age-warn');
-  const stInfo = document.getElementById('status-info');
+  const sectorField = sector.parentElement; // الحقل بتاع القطاع كله عشان نخفيه
 
-  // 1. تنظيف شامل للقائمة عشان متبقاش "ملزقة" في الصفحة
-  sector.innerHTML = ""; 
-  
-  // 2. تصفير باقي الحقول
-  if(warn) warn.style.display = 'none';
-  if(stInfo) { stInfo.style.display = 'none'; stInfo.innerHTML = ''; }
+  // 1. تنظيف شامل في كل مرة نغير فيها السن
+  sector.innerHTML = "";
+  sector.disabled = false;
+  sectorField.style.display = 'block'; // نظهره افتراضياً
+  st1.disabled = false;
+  st2.disabled = false;
   st1.checked = false;
   st2.checked = false;
-  st2.disabled = false;
+  if(warn) warn.style.display = 'none';
 
-  if (!group) {
-    // لازم نحطها جوه <option> عشان المتصفح ميرميهاش بره
-    sector.innerHTML = '<option value="">اختر الفئة العمرية أولاً</option>';
-    return;
-  }
+  if (!group) return;
 
-  // 3. لو السن 15-18 (ثانوي)
+  // 2. فئة الثانوي (15-18)
   if (group === '15-18') {
     sector.innerHTML = '<option value="ثانوي">التعليم الثانوي (عام/فني)</option>';
-    sector.value = 'ثانوي';
     st1.checked = true;
     st2.disabled = true;
+    if(warn) {
+      warn.style.display = 'block';
+      warn.innerHTML = "⚠️ فئتك 15-18: تم تحديدك 'ثانوي' و 'طالب' تلقائياً.";
+    }
   } 
-  // 4. لو السن أكبر (كليات) - ركز هنا في الـ <option>
-  else {
+  // 3. فئات الشباب (19-29) - هنا يختار براحته
+  else if (group === '19-25' || group === '26-29') {
     sector.innerHTML = `
       <option value="">اختر القطاع الدراسي</option>
       <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض...)</option>
       <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات...)</option>
-      <option value="أدبي وإنساني">أدبي وإنساني (تجارة، حقوق، آداب، إعلام...)</option>
+      <option value="أدبي وإنساني">أدبي وإنساني (تجارة، حقوق، آداب...)</option>
       <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون...)</option>
     `;
+  }
+  // 4. فئة فوق الـ 30 (خريج تلقائي + إخفاء القطاع)
+  else {
+    sector.innerHTML = '<option value="خريج عملي">خريج / سوق العمل</option>';
+    sectorField.style.display = 'none'; // بنخفي الحقل خالص عشان ملوش لازمة
+    st2.checked = true; // نحدد خريج
+    st1.disabled = true; // نقفل طالب
+    if(warn) {
+      warn.style.display = 'block';
+      warn.innerHTML = "✅ فئة فوق الـ 30: تم تحديد الوضع كـ 'خريج' وحفظ البيانات.";
+    }
   }
 }
 // القطاع في 25-30 مش بيغير الوضع — الوضع متاح للاتنين

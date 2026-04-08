@@ -325,11 +325,11 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1nHBDJgd9wsIU9vELJ
 function onAgeChange() {
   const group = document.getElementById('fa').value;
   const sector = document.getElementById('fsector');
-  const st1 = document.getElementById('st1'); // طالب
-  const st2 = document.getElementById('st2'); // خريج
+  const st1 = document.getElementById('st1'); // راديو طالب
+  const st2 = document.getElementById('st2'); // راديو خريج
   const warn = document.getElementById('age-warn');
 
-  // 1. تصفير وفتح الخانات
+  // 1. تصفير وفتح كل حاجة عشان اليوزر يبدأ على نظافة
   sector.disabled = false;
   st1.disabled = false;
   st2.disabled = false;
@@ -339,20 +339,21 @@ function onAgeChange() {
 
   if (!group) return;
 
-  // 2. المنطق حسب الفئة العمرية
+  // 2. المنطق: لو الفئة هي (15-18) فقط
   if (group === '15-18') {
-    // حالة الثانوي: إجبارية ومنطقية
+    // القطاع فيه "ثانوي" بس
     sector.innerHTML = `<option value="ثانوي">التعليم الثانوي (عام/فني)</option>`;
     sector.value = 'ثانوي';
-    st1.checked = true;
-    st2.disabled = true; // مستحيل خريج جامعة في السن ده
+    st1.checked = true; // طالب أوتوماتيك
+    st2.disabled = true; // مستحيل خريج جامعة وهو 17 سنة
+    
     if(warn) {
       warn.style.display = 'block';
-      warn.innerHTML = "⚠️ تم تحديد قطاعك كـ 'ثانوي' ووضعك كـ 'طالب' بناءً على سنك.";
+      warn.innerHTML = "⚠️ فئتك العمرية (15-18) تم تحديد قطاعك كـ 'ثانوي' ووضعك كـ 'طالب'.";
     }
   } 
+  // 3. أي فئة تانية (19-24 فأعلى) -> الثانوي اتمسح تماماً
   else {
-    // حالة الجامعة وما بعدها (19-24 فأعلى): شلنا "ثانوي" خالص
     sector.innerHTML = `
       <option value="">اختر القطاع الدراسي</option>
       <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض...)</option>
@@ -360,7 +361,7 @@ function onAgeChange() {
       <option value="أدبي وإنساني">أدبي وإنساني (تجارة، حقوق، آداب، إعلام...)</option>
       <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون...)</option>
     `;
-    // هنا مفيش أي تحديد تلقائي.. اليوزر يختار قطاعه ووضعه (طالب/خريج) براحته
+    // حرية كاملة: لا تحديد تلقائي ولا رسائل صفراء ولا ثانوي في الاختيارات
     if(warn) warn.style.display = 'none';
   }
 }

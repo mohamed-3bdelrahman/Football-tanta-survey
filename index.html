@@ -325,48 +325,43 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1nHBDJgd9wsIU9vELJ
 function onAgeChange() {
   const group = document.getElementById('fa').value;
   const sector = document.getElementById('fsector');
-  const st1 = document.getElementById('st1'); // راديو طالب
-  const st2 = document.getElementById('st2'); // راديو خريج
+  const st1 = document.getElementById('st1'); // طالب
+  const st2 = document.getElementById('st2'); // خريج
   const warn = document.getElementById('age-warn');
-  const stInfo = document.getElementById('status-info'); // الرسالة اللي بتطلع تحت
 
-  // 1. افتح كل حاجة وصفر أي اختيارات تلقائية مستفزة
+  // 1. تصفير وفتح الخانات
   sector.disabled = false;
   st1.disabled = false;
   st2.disabled = false;
   st1.checked = false;
   st2.checked = false;
-  
-  // 2. اخفي أي رسائل "تم التحديد تلقائياً" قديمة
   if(warn) warn.style.display = 'none';
-  if(stInfo) stInfo.style.display = 'none';
 
   if (!group) return;
 
-  // 3. تحديث القائمة (عشان تظهر "ثانوي" للي محتاجها)
-  sector.innerHTML = `
-    <option value="">اختر القطاع الدراسي</option>
-    <option value="ثانوي">التعليم الثانوي (عام/فني)</option>
-    <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض...)</option>
-    <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات...)</option>
-    <option value="أدبي وإنساني">أدبي وإنساني (تجارة، حقوق، آداب، إعلام...)</option>
-    <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون...)</option>
-  `;
-
-  // 4. المنطق الوحيد (أقل من 19 سنة فقط)
+  // 2. المنطق حسب الفئة العمرية
   if (group === '15-18') {
+    // حالة الثانوي: إجبارية ومنطقية
+    sector.innerHTML = `<option value="ثانوي">التعليم الثانوي (عام/فني)</option>`;
     sector.value = 'ثانوي';
     st1.checked = true;
-    st2.disabled = true; // مفيش خريج في السن ده
-    if(stInfo) {
-      stInfo.style.display = 'block';
-      stInfo.textContent = '✅ تم التحديد تلقائياً: ثانوي — طالب';
+    st2.disabled = true; // مستحيل خريج جامعة في السن ده
+    if(warn) {
+      warn.style.display = 'block';
+      warn.innerHTML = "⚠️ تم تحديد قطاعك كـ 'ثانوي' ووضعك كـ 'طالب' بناءً على سنك.";
     }
   } 
-  // 5. أي سن تاني (19-24 أو غيره) الكود مش هيلمس الاختيارات
   else {
-    // سيب اليوزر يختار بمزاجه "طالب" أو "خريج"
-    if(stInfo) stInfo.style.display = 'none';
+    // حالة الجامعة وما بعدها (19-24 فأعلى): شلنا "ثانوي" خالص
+    sector.innerHTML = `
+      <option value="">اختر القطاع الدراسي</option>
+      <option value="طبي وصحي">طبي وصحي (طب، صيدلة، تمريض...)</option>
+      <option value="هندسي وتكنولوجي">هندسي وتكنولوجي (هندسة، حاسبات...)</option>
+      <option value="أدبي وإنساني">أدبي وإنساني (تجارة، حقوق، آداب، إعلام...)</option>
+      <option value="رياضي وفني">رياضي وفني (تربية رياضية، فنون...)</option>
+    `;
+    // هنا مفيش أي تحديد تلقائي.. اليوزر يختار قطاعه ووضعه (طالب/خريج) براحته
+    if(warn) warn.style.display = 'none';
   }
 }
 // القطاع في 25-30 مش بيغير الوضع — الوضع متاح للاتنين
